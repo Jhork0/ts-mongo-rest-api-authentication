@@ -1,0 +1,39 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb-api-rest-ts-express  # 🔁 CAMBIAR: Usa un nombre único por proyecto, ej. mongodb-mi-nuevo-proyecto
+    restart: always
+    ports:
+      - "27017:27017"  # 📡 CAMBIAR: Cambia el puerto externo si vas a correr varios proyectos a la vez, ej. "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: api-rest  # 🧾 CAMBIAR: Nombre de la base de datos inicial para tu nuevo proyecto
+    volumes:
+      - mongodb_data_api-rest-ts-express:/data/db  # 💾 CAMBIAR: Usa un volumen distinto, ej. mongodb_data_proyecto2:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d  # (Opcional) Usa si quieres ejecutar scripts de inicialización
+    networks:
+      - app-network  # 🌐 (Opcional) Cambia el nombre si quieres redes aisladas por proyecto
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    container_name: mongo-express-rest-ts-express # 🔁 CAMBIAR: Nombre único por proyecto, ej. mongo-express-proyecto2
+    restart: always
+    ports:
+      - "8081:8081"  # 📡 CAMBIAR: Cambia el puerto externo si es necesario, ej. "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    networks:
+      - app-network  # 🌐 Asegúrate de usar el mismo nombre que en el servicio mongodb
+
+volumes:
+  mongodb_data_api-rest-ts-express:  # 💾 CAMBIAR: Usa el mismo nombre que en el servicio mongodb, ej. mongodb_data_proyecto2
+
+networks:
+  app-network:  # 🌐 CAMBIAR: Nombre de red único si deseas redes separadas por proyecto, ej. app-network-proyecto2
+    driver: bridge
