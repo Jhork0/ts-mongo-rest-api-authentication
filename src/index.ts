@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import compression from 'compression'
 import cors from 'cors'
 import mongoose from 'mongoose'
+import router from './router'
 
 const app = express()
 
@@ -27,3 +28,5 @@ const MONGODB_URI="mongodb://admin:password123@localhost:27017/api-rest?authSour
 mongoose.Promise = Promise
 mongoose.connect(MONGODB_URI)
 mongoose.connection.on('error', (error:Error)=> console.log(error))
+
+app.use('/', router())
